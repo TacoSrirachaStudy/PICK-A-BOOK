@@ -1,0 +1,14 @@
+---
+name: issue template
+about: Describe this issue template's purpose here.
+title: "[Label] 이슈 제목"
+labels: ''
+assignees: ''
+
+---
+
+// 제목은 [라벨] 제목 의 형태로 작성해주세요 ex) [Setting] Next.js 환경 세팅
+ 
+✨ TODO
+- [ ] 
+- [ ]
