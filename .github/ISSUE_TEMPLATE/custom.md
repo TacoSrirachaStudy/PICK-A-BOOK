@@ -1,6 +1,6 @@
 ---
-name: Custom issue template
-about: Describe this issue template's purpose here.
+name: 이슈 템플릿
+about: 아자잣 🤓
 title: "[Label] 제목"
 labels: ''
 assignees: ''
