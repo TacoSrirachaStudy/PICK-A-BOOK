@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 html,
 body,
 div,
@@ -135,6 +139,10 @@ body {
   height: 100vh;
   background-color: aliceblue;
   background: center/cover url('_assets/images/background.png') no-repeat;
+}
+
+button {
+  cursor: pointer;
 }
 
 .wrapper {
