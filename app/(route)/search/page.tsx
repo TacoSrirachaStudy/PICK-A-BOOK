@@ -1,17 +1,22 @@
 "use client";
 import Image from "next/image";
-import styles from "./page.module.css";
 import styled from "styled-components";
 import BookImage1 from "../../_assets/images/dummy_book_1.png";
 import BookImage2 from "../../_assets/images/dummy_book_2.png";
 import BookImage3 from "../../_assets/images/dummy_book_3.png";
 import BookImage4 from "../../_assets/images/dummy_book_4.png";
 import BookImage5 from "../../_assets/images/dummy_book_5.png";
+import SearchIcon from "../../_assets/icons/Search.svg";
 
 export default function Search() {
   return (
-    <SearchWrapper>
-      <SearchBar placeholder="어떤 책을 찾고 있나요?" />
+    <Wrapper>
+      <SearchWrapper>
+        <SearchBar placeholder="어떤 책을 찾고 있나요?" />
+        <SearchIconWrapper>
+          <Image src={SearchIcon} alt="검색아이콘" />
+        </SearchIconWrapper>
+      </SearchWrapper>
       <ResultWrapper>
         <Image src={BookImage1} alt="책이미지1" />
         <Image src={BookImage2} alt="책이미지2" />
@@ -19,16 +24,30 @@ export default function Search() {
         <Image src={BookImage4} alt="책이미지4" />
         <Image src={BookImage5} alt="책이미지5" />
       </ResultWrapper>
-    </SearchWrapper>
+    </Wrapper>
   );
 }
 
-const SearchWrapper = styled.div`
+const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding-top: 172px;
+`;
+
+const SearchWrapper = styled.div`
+  position: relative;
+  width: 700px;
+  height: 80px;
+  margin-bottom: 141px;
+`;
+
+const SearchIconWrapper = styled.div`
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  transform: translateY(-50%);
 `;
 
 const SearchBar = styled.input.attrs((props) => ({
@@ -38,7 +57,7 @@ const SearchBar = styled.input.attrs((props) => ({
   width: 700px;
   height: 80px;
   padding-left: 23px;
-  margin-bottom: 141px;
+  position: relative;
 
   color: #fbff48;
   font-size: 32px;
