@@ -1,19 +1,57 @@
 "use client";
 import Image from "next/image";
 import styled from "styled-components";
+import { NextApiRequest, NextApiResponse } from "next";
 import BookImage1 from "../../_assets/images/dummy_book_1.png";
 import BookImage2 from "../../_assets/images/dummy_book_2.png";
 import BookImage3 from "../../_assets/images/dummy_book_3.png";
 import BookImage4 from "../../_assets/images/dummy_book_4.png";
 import BookImage5 from "../../_assets/images/dummy_book_5.png";
 import SearchIcon from "../../_assets/icons/Search.svg";
+import { useState } from "react";
+import { useQuery } from "react-query";
 
-export default function Search() {
+const fetchBooks = async (query: string) => {
+  try {
+    const response = await fetch(`https://dapi.kakao.com/v3/search/book`, {
+      headers: {
+        Authorization: `KakaoAK ${process.env.NEXT_PUBLIC_KAKAO_API_KEY}`,
+      },
+    });
+    if (!response.ok) {
+      throw new Error("서버에서 책을 가져오는 중 오류가 발생했습니다.");
+    }
+    return response.json();
+  } catch (error) {
+    throw new Error("책을 가져오는 중 오류가 발생했습니다.");
+  }
+};
+
+const Search: React.FC = () => {
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  // React Query의 useQuery 훅 사용
+  const { data, isLoading, isError } = useQuery(
+    ["books", searchQuery],
+    () => fetchBooks(searchQuery),
+    {
+      enabled: !!searchQuery.trim(),
+    }
+  );
+
+  const handleBookSearchResult = () => {
+    setSearchQuery(searchQuery.trim());
+  };
+
   return (
     <Wrapper>
       <SearchWrapper>
-        <SearchBar placeholder="어떤 책을 찾고 있나요?" />
-        <SearchIconWrapper>
+        <SearchBar
+          placeholder="어떤 책을 찾고 있나요?"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        <SearchIconWrapper onClick={handleBookSearchResult}>
           <Image src={SearchIcon} alt="검색아이콘" />
         </SearchIconWrapper>
       </SearchWrapper>
@@ -26,7 +64,9 @@ export default function Search() {
       </ResultWrapper>
     </Wrapper>
   );
-}
+};
+
+export default Search;
 
 const Wrapper = styled.div`
   display: flex;
@@ -48,6 +88,7 @@ const SearchIconWrapper = styled.div`
   top: 50%;
   right: 15px;
   transform: translateY(-50%);
+  cursor: pointer; // 클릭 가능한 요소로 변경
 `;
 
 const SearchBar = styled.input.attrs((props) => ({
