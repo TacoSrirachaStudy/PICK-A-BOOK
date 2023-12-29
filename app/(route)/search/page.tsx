@@ -1,11 +1,6 @@
 "use client";
 import Image from "next/image";
 import styled from "styled-components";
-import BookImage1 from "../../_assets/images/dummy_book_1.png";
-import BookImage2 from "../../_assets/images/dummy_book_2.png";
-import BookImage3 from "../../_assets/images/dummy_book_3.png";
-import BookImage4 from "../../_assets/images/dummy_book_4.png";
-import BookImage5 from "../../_assets/images/dummy_book_5.png";
 import SearchIcon from "../../_assets/icons/Search.svg";
 import { useState } from "react";
 import { useQuery } from "react-query";
@@ -63,11 +58,19 @@ const Search: React.FC = () => {
         </SearchIconWrapper>
       </SearchWrapper>
       <ResultWrapper>
-        <Image src={BookImage1} alt="책이미지1" />
-        <Image src={BookImage2} alt="책이미지2" />
-        <Image src={BookImage3} alt="책이미지3" />
-        <Image src={BookImage4} alt="책이미지4" />
-        <Image src={BookImage5} alt="책이미지5" />
+        {bookData && (
+          <>
+            {bookData.documents.map((book: any, index: number) => (
+              <Image
+                key={index}
+                src={book.thumbnail}
+                alt={`책 이미지 ${index + 1}`}
+                width={196}
+                height={280}
+              />
+            ))}
+          </>
+        )}
       </ResultWrapper>
     </Wrapper>
   );
@@ -123,5 +126,9 @@ const SearchBar = styled.input.attrs((props) => ({
 const ResultWrapper = styled.div`
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 24px;
+
+  overflow-x: auto;
+  width: 1080px;
+  margin: 0 auto;
 `;
