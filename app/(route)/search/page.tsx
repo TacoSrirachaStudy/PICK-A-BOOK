@@ -88,14 +88,18 @@ const Search: React.FC = () => {
         {bookData && (
           <>
             {bookData.documents.map((book: any, index: number) => (
-              <ResultImage
-                onClick={() => handleShowDetailPage(book)}
-                key={index}
-                src={book.thumbnail}
-                alt={`책 이미지 ${index + 1}`}
-                width={196}
-                height={280}
-              />
+              <ResultImageWrapper key={index}>
+                <ResultImage
+                  onClick={() => handleShowDetailPage(book)}
+                  key={index}
+                  src={book.thumbnail}
+                  alt={`책 이미지 ${index + 1}`}
+                  width={196}
+                  height={280}
+                />
+                <ImageDetail>{book.title}</ImageDetail>
+                <ImageDetailContent>{book.contents}</ImageDetailContent>
+              </ResultImageWrapper>
             ))}
           </>
         )}
@@ -180,8 +184,70 @@ const ResultWrapper = styled.div`
 `;
 
 const ResultImage = styled(Image)`
-  &&:hover {
-    transform: translateY(-20px);
-    background-color: gray;
+  position: relative;
+`;
+
+const ImageDetail = styled.div`
+  position: absolute;
+  top: 25px;
+  left: 0;
+  right: 0;
+  color: white;
+
+  text-align: center;
+  font-family: Pretendard;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 700;
+
+  width: 196px;
+  height: 33px;
+  padding: 8px;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const ImageDetailContent = styled.div`
+  position: absolute;
+  top: 66px;
+  color: white;
+  text-align: center;
+
+  width: 196px;
+  height: 100px;
+  padding: 8px;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+
+  overflow: hidden;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  line-height: 1.1;
+  -webkit-box-orient: vertical;
+  word-break: keep-all;
+`;
+
+const ResultImageWrapper = styled.div`
+  position: relative;
+
+  &:hover {
+    ${ImageDetail} {
+      opacity: 1;
+      transform: translateY(-20px);
+    }
+    ${ImageDetailContent} {
+      opacity: 1;
+      transform: translateY(-20px);
+    }
+    ${ResultImage} {
+      filter: brightness(40%);
+      transform: translateY(-20px);
+    }
   }
 `;
