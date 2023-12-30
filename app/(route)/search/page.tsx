@@ -1,27 +1,28 @@
 "use client";
 import Image from "next/image";
 import styled from "styled-components";
-import { NextApiRequest, NextApiResponse } from "next";
-import BookImage1 from "../../_assets/images/dummy_book_1.png";
-import BookImage2 from "../../_assets/images/dummy_book_2.png";
-import BookImage3 from "../../_assets/images/dummy_book_3.png";
-import BookImage4 from "../../_assets/images/dummy_book_4.png";
-import BookImage5 from "../../_assets/images/dummy_book_5.png";
 import SearchIcon from "../../_assets/icons/Search.svg";
 import { useState } from "react";
 import { useQuery } from "react-query";
 
 const fetchBooks = async (query: string) => {
   try {
-    const response = await fetch(`https://dapi.kakao.com/v3/search/book`, {
-      headers: {
-        Authorization: `KakaoAK ${process.env.NEXT_PUBLIC_KAKAO_API_KEY}`,
-      },
-    });
+    const response = await fetch(
+      `https://dapi.kakao.com/v3/search/book?query=${encodeURIComponent(
+        query
+      )}`,
+      {
+        headers: {
+          Authorization: `KakaoAK ${process.env.NEXT_PUBLIC_KAKAO_API_KEY}`,
+        },
+      }
+    );
     if (!response.ok) {
       throw new Error("서버에서 책을 가져오는 중 오류가 발생했습니다.");
     }
-    return response.json();
+    const jsonData = await response.json(); // JSON 데이터를 파싱
+    console.log(jsonData);
+    return jsonData;
   } catch (error) {
     throw new Error("책을 가져오는 중 오류가 발생했습니다.");
   }
@@ -29,18 +30,19 @@ const fetchBooks = async (query: string) => {
 
 const Search: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
-
-  // React Query의 useQuery 훅 사용
-  const { data, isLoading, isError } = useQuery(
-    ["books", searchQuery],
-    () => fetchBooks(searchQuery),
-    {
-      enabled: !!searchQuery.trim(),
-    }
-  );
+  const {
+    data: bookData,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery(["books", searchQuery], () => fetchBooks(searchQuery), {
+    enabled: false,
+  });
 
   const handleBookSearchResult = () => {
-    setSearchQuery(searchQuery.trim());
+    if (searchQuery.trim()) {
+      refetch();
+    }
   };
 
   return (
@@ -56,11 +58,19 @@ const Search: React.FC = () => {
         </SearchIconWrapper>
       </SearchWrapper>
       <ResultWrapper>
-        <Image src={BookImage1} alt="책이미지1" />
-        <Image src={BookImage2} alt="책이미지2" />
-        <Image src={BookImage3} alt="책이미지3" />
-        <Image src={BookImage4} alt="책이미지4" />
-        <Image src={BookImage5} alt="책이미지5" />
+        {bookData && (
+          <>
+            {bookData.documents.map((book: any, index: number) => (
+              <Image
+                key={index}
+                src={book.thumbnail}
+                alt={`책 이미지 ${index + 1}`}
+                width={196}
+                height={280}
+              />
+            ))}
+          </>
+        )}
       </ResultWrapper>
     </Wrapper>
   );
@@ -116,5 +126,9 @@ const SearchBar = styled.input.attrs((props) => ({
 const ResultWrapper = styled.div`
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 24px;
+
+  overflow-x: auto;
+  width: 1080px;
+  margin: 0 auto;
 `;
