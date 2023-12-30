@@ -4,13 +4,12 @@ import styled from "styled-components";
 import SearchIcon from "../../_assets/icons/Search.svg";
 import { useState } from "react";
 import { useQuery } from "react-query";
+import { useRouter } from "next/navigation";
 
 const fetchBooks = async (query: string) => {
   try {
     const response = await fetch(
-      `https://dapi.kakao.com/v3/search/book?query=${encodeURIComponent(
-        query
-      )}`,
+      `https://dapi.kakao.com/v3/search/book?query=${encodeURIComponent(query)}`,
       {
         headers: {
           Authorization: `KakaoAK ${process.env.NEXT_PUBLIC_KAKAO_API_KEY}`,
@@ -29,6 +28,7 @@ const fetchBooks = async (query: string) => {
 };
 
 const Search: React.FC = () => {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState<string>("");
   const {
     data: bookData,
@@ -44,9 +44,26 @@ const Search: React.FC = () => {
       refetch();
     }
   };
-
+  const handleShowDetailPage: any = (book: any) => {
+    console.log(book);
+    router.push(
+      `/detail?title=${encodeURIComponent(book.title)}&authors=${encodeURIComponent(
+        book.authors
+      )}&contents=${encodeURIComponent(book.contents)}&datetime=${encodeURIComponent(
+        book.datetime
+      )}&isbn=${encodeURIComponent(book.isbn)}&price=${encodeURIComponent(
+        book.price
+      )}&publisher=${encodeURIComponent(book.publisher)}&sale_price=${encodeURIComponent(
+        book.sale_price
+      )}&translators=${encodeURIComponent(book.translators)}&url=${encodeURIComponent(
+        book.url
+      )}&thumbnail=${encodeURIComponent(book.thumbnail)}
+    }`
+    );
+  };
   return (
     <Wrapper>
+      <BackGround></BackGround>
       <SearchWrapper>
         <SearchBar
           placeholder="어떤 책을 찾고 있나요?"
@@ -62,6 +79,7 @@ const Search: React.FC = () => {
           <>
             {bookData.documents.map((book: any, index: number) => (
               <Image
+                onClick={() => handleShowDetailPage(book)}
                 key={index}
                 src={book.thumbnail}
                 alt={`책 이미지 ${index + 1}`}
@@ -78,6 +96,18 @@ const Search: React.FC = () => {
 
 export default Search;
 
+const BackGround = styled.div`
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 0;
+
+  width: 100vw;
+  height: 100vh;
+
+  background-color: black;
+  opacity: 30%;
+`;
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -88,6 +118,7 @@ const Wrapper = styled.div`
 
 const SearchWrapper = styled.div`
   position: relative;
+  z-index: 2;
   width: 700px;
   height: 80px;
   margin-bottom: 141px;
@@ -116,6 +147,8 @@ const SearchBar = styled.input.attrs((props) => ({
   border: 5px solid #fbff48;
   background-color: rgba(217, 217, 217, 0);
 
+  outline: none;
+
   &&::placeholder {
     padding-left: 23px;
     color: #fbff48;
@@ -124,6 +157,7 @@ const SearchBar = styled.input.attrs((props) => ({
 `;
 
 const ResultWrapper = styled.div`
+  z-index: 100;
   display: flex;
   align-items: center;
   gap: 24px;
