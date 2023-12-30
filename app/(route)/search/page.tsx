@@ -9,7 +9,9 @@ import { useRouter } from "next/navigation";
 const fetchBooks = async (query: string) => {
   try {
     const response = await fetch(
-      `https://dapi.kakao.com/v3/search/book?query=${encodeURIComponent(query)}`,
+      `https://dapi.kakao.com/v3/search/book?query=${encodeURIComponent(
+        query
+      )}`,
       {
         headers: {
           Authorization: `KakaoAK ${process.env.NEXT_PUBLIC_KAKAO_API_KEY}`,
@@ -47,17 +49,25 @@ const Search: React.FC = () => {
   const handleShowDetailPage: any = (book: any) => {
     console.log(book);
     router.push(
-      `/detail?title=${encodeURIComponent(book.title)}&authors=${encodeURIComponent(
+      `/detail?title=${encodeURIComponent(
+        book.title
+      )}&authors=${encodeURIComponent(
         book.authors
-      )}&contents=${encodeURIComponent(book.contents)}&datetime=${encodeURIComponent(
+      )}&contents=${encodeURIComponent(
+        book.contents
+      )}&datetime=${encodeURIComponent(
         book.datetime
       )}&isbn=${encodeURIComponent(book.isbn)}&price=${encodeURIComponent(
         book.price
-      )}&publisher=${encodeURIComponent(book.publisher)}&sale_price=${encodeURIComponent(
+      )}&publisher=${encodeURIComponent(
+        book.publisher
+      )}&sale_price=${encodeURIComponent(
         book.sale_price
-      )}&translators=${encodeURIComponent(book.translators)}&url=${encodeURIComponent(
-        book.url
-      )}&thumbnail=${encodeURIComponent(book.thumbnail)}
+      )}&translators=${encodeURIComponent(
+        book.translators
+      )}&url=${encodeURIComponent(book.url)}&thumbnail=${encodeURIComponent(
+        book.thumbnail
+      )}
     }`
     );
   };
@@ -78,7 +88,7 @@ const Search: React.FC = () => {
         {bookData && (
           <>
             {bookData.documents.map((book: any, index: number) => (
-              <Image
+              <ResultImage
                 onClick={() => handleShowDetailPage(book)}
                 key={index}
                 src={book.thumbnail}
@@ -121,7 +131,7 @@ const SearchWrapper = styled.div`
   z-index: 2;
   width: 700px;
   height: 80px;
-  margin-bottom: 141px;
+  margin-bottom: 100px;
 `;
 
 const SearchIconWrapper = styled.div`
@@ -163,6 +173,15 @@ const ResultWrapper = styled.div`
   gap: 24px;
 
   overflow-x: auto;
+  height: auto;
+  height: 400px;
   width: 1080px;
   margin: 0 auto;
+`;
+
+const ResultImage = styled(Image)`
+  &&:hover {
+    transform: translateY(-20px);
+    background-color: gray;
+  }
 `;
