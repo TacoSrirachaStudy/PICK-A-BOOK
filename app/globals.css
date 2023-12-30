@@ -134,11 +134,12 @@ table {
 }
 
 body {
+  position: fixed;
   width: 100vw;
   font-family: 'Pretendard';
   height: 100vh;
   background-color: aliceblue;
-  background: center/cover url('_assets/images/background.png') no-repeat;
+
 }
 
 button {
