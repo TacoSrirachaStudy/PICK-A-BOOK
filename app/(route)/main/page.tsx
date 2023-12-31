@@ -2,6 +2,7 @@
 import Image from "next/image";
 import styles from "./page.module.css";
 import styled from "styled-components";
+import Link from "next/link";
 
 export default function OnBoarding() {
   return (
@@ -13,7 +14,9 @@ export default function OnBoarding() {
         <br /> They let you travel without <br />
         moving your feet.
       </Intro>
-      <StartButton>시작하기</StartButton>
+      <Link href="/search" passHref>
+        <StartButton>시작하기</StartButton>
+      </Link>
     </Wrapper>
   );
 }

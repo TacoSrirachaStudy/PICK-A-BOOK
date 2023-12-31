@@ -9,7 +9,9 @@ import { useRouter } from "next/navigation";
 const fetchBooks = async (query: string) => {
   try {
     const response = await fetch(
-      `https://dapi.kakao.com/v3/search/book?query=${encodeURIComponent(query)}`,
+      `https://dapi.kakao.com/v3/search/book?query=${encodeURIComponent(
+        query
+      )}`,
       {
         headers: {
           Authorization: `KakaoAK ${process.env.NEXT_PUBLIC_KAKAO_API_KEY}`,
@@ -47,17 +49,25 @@ const Search: React.FC = () => {
   const handleShowDetailPage: any = (book: any) => {
     console.log(book);
     router.push(
-      `/detail?title=${encodeURIComponent(book.title)}&authors=${encodeURIComponent(
+      `/detail?title=${encodeURIComponent(
+        book.title
+      )}&authors=${encodeURIComponent(
         book.authors
-      )}&contents=${encodeURIComponent(book.contents)}&datetime=${encodeURIComponent(
+      )}&contents=${encodeURIComponent(
+        book.contents
+      )}&datetime=${encodeURIComponent(
         book.datetime
       )}&isbn=${encodeURIComponent(book.isbn)}&price=${encodeURIComponent(
         book.price
-      )}&publisher=${encodeURIComponent(book.publisher)}&sale_price=${encodeURIComponent(
+      )}&publisher=${encodeURIComponent(
+        book.publisher
+      )}&sale_price=${encodeURIComponent(
         book.sale_price
-      )}&translators=${encodeURIComponent(book.translators)}&url=${encodeURIComponent(
-        book.url
-      )}&thumbnail=${encodeURIComponent(book.thumbnail)}
+      )}&translators=${encodeURIComponent(
+        book.translators
+      )}&url=${encodeURIComponent(book.url)}&thumbnail=${encodeURIComponent(
+        book.thumbnail
+      )}
     }`
     );
   };
@@ -78,14 +88,18 @@ const Search: React.FC = () => {
         {bookData && (
           <>
             {bookData.documents.map((book: any, index: number) => (
-              <Image
-                onClick={() => handleShowDetailPage(book)}
-                key={index}
-                src={book.thumbnail}
-                alt={`책 이미지 ${index + 1}`}
-                width={196}
-                height={280}
-              />
+              <ResultImageWrapper key={index}>
+                <ResultImage
+                  onClick={() => handleShowDetailPage(book)}
+                  key={index}
+                  src={book.thumbnail}
+                  alt={`책 이미지 ${index + 1}`}
+                  width={196}
+                  height={280}
+                />
+                <ImageDetail>{book.title}</ImageDetail>
+                <ImageDetailContent>{book.contents}</ImageDetailContent>
+              </ResultImageWrapper>
             ))}
           </>
         )}
@@ -121,7 +135,7 @@ const SearchWrapper = styled.div`
   z-index: 2;
   width: 700px;
   height: 80px;
-  margin-bottom: 141px;
+  margin-bottom: 100px;
 `;
 
 const SearchIconWrapper = styled.div`
@@ -163,6 +177,77 @@ const ResultWrapper = styled.div`
   gap: 24px;
 
   overflow-x: auto;
+  height: auto;
+  height: 400px;
   width: 1080px;
   margin: 0 auto;
+`;
+
+const ResultImage = styled(Image)`
+  position: relative;
+`;
+
+const ImageDetail = styled.div`
+  position: absolute;
+  top: 25px;
+  left: 0;
+  right: 0;
+  color: white;
+
+  text-align: center;
+  font-family: Pretendard;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 700;
+
+  width: 196px;
+  height: 33px;
+  padding: 8px;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const ImageDetailContent = styled.div`
+  position: absolute;
+  top: 66px;
+  color: white;
+  text-align: center;
+
+  width: 196px;
+  height: 100px;
+  padding: 8px;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+
+  overflow: hidden;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  line-height: 1.1;
+  -webkit-box-orient: vertical;
+  word-break: keep-all;
+`;
+
+const ResultImageWrapper = styled.div`
+  position: relative;
+
+  &:hover {
+    ${ImageDetail} {
+      opacity: 1;
+      transform: translateY(-20px);
+    }
+    ${ImageDetailContent} {
+      opacity: 1;
+      transform: translateY(-20px);
+    }
+    ${ResultImage} {
+      filter: brightness(40%);
+      transform: translateY(-20px);
+    }
+  }
 `;
