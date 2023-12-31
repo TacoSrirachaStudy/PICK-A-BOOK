@@ -1,5 +1,3 @@
-import { CSSProperties } from "styled-components";
-
 export type PaginationProps = {
   total: number;
   itemsPerPage: number;
