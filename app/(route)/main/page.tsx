@@ -40,8 +40,11 @@ const Intro = styled.p`
 `;
 const Wrapper = styled.div`
   position: relative;
-  height: 100vh;
+
   padding-top: 100px;
+
+  height: 100vh;
+
   color: #fbff48;
   font-size: 24px;
   font-family: "Pretendard";
@@ -49,16 +52,20 @@ const Wrapper = styled.div`
 `;
 
 const StartButton = styled.button`
+  position: absolute;
+  bottom: 100px;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  position: absolute;
-  bottom: 100px;
+
   width: 100%;
   height: 80px;
+
   border: 5px solid #fbff48;
-  color: #fbff48;
   background: none;
+
+  color: #fbff48;
   font-family: "Pretendard";
   font-weight: 600;
   font-size: 28px;

@@ -5,13 +5,13 @@ import SearchIcon from "../../_assets/icons/Search.svg";
 import { useState } from "react";
 import { useQuery } from "react-query";
 import { useRouter } from "next/navigation";
+import { useMemo } from "react";
+import { PageProps, PaginationProps } from "./type";
 
 const fetchBooks = async (query: string) => {
   try {
     const response = await fetch(
-      `https://dapi.kakao.com/v3/search/book?query=${encodeURIComponent(
-        query
-      )}`,
+      `https://dapi.kakao.com/v3/search/book?query=${encodeURIComponent(query)}`,
       {
         headers: {
           Authorization: `KakaoAK ${process.env.NEXT_PUBLIC_KAKAO_API_KEY}`,
@@ -27,6 +27,20 @@ const fetchBooks = async (query: string) => {
   } catch (error) {
     throw new Error("책을 가져오는 중 오류가 발생했습니다.");
   }
+};
+
+const Pagination = ({ total, itemsPerPage, currentPage, onPageChange }: PaginationProps) => {
+  const pageCount = Math.ceil(total / itemsPerPage);
+
+  return (
+    <PagenationWrapper>
+      {Array.from({ length: pageCount }, (_, index) => (
+        <Page key={index} onClick={() => onPageChange(index)} isActive={index === currentPage}>
+          {index + 1}
+        </Page>
+      ))}
+    </PagenationWrapper>
+  );
 };
 
 const Search: React.FC = () => {
@@ -49,28 +63,33 @@ const Search: React.FC = () => {
   const handleShowDetailPage: any = (book: any) => {
     console.log(book);
     router.push(
-      `/detail?title=${encodeURIComponent(
-        book.title
-      )}&authors=${encodeURIComponent(
+      `/detail?title=${encodeURIComponent(book.title)}&authors=${encodeURIComponent(
         book.authors
-      )}&contents=${encodeURIComponent(
-        book.contents
-      )}&datetime=${encodeURIComponent(
+      )}&contents=${encodeURIComponent(book.contents)}&datetime=${encodeURIComponent(
         book.datetime
       )}&isbn=${encodeURIComponent(book.isbn)}&price=${encodeURIComponent(
         book.price
-      )}&publisher=${encodeURIComponent(
-        book.publisher
-      )}&sale_price=${encodeURIComponent(
+      )}&publisher=${encodeURIComponent(book.publisher)}&sale_price=${encodeURIComponent(
         book.sale_price
-      )}&translators=${encodeURIComponent(
-        book.translators
-      )}&url=${encodeURIComponent(book.url)}&thumbnail=${encodeURIComponent(
-        book.thumbnail
-      )}
+      )}&translators=${encodeURIComponent(book.translators)}&url=${encodeURIComponent(
+        book.url
+      )}&thumbnail=${encodeURIComponent(book.thumbnail)}
     }`
     );
   };
+
+  const itemsPerPage = 5;
+  const [currentPage, setCurrentPage] = useState(0);
+
+  const currentBooks = useMemo(() => {
+    const start = currentPage * itemsPerPage;
+    return bookData?.documents.slice(start, start + itemsPerPage) || [];
+  }, [bookData, currentPage, itemsPerPage]);
+
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
   return (
     <Wrapper>
       <BackGround></BackGround>
@@ -85,9 +104,9 @@ const Search: React.FC = () => {
         </SearchIconWrapper>
       </SearchWrapper>
       <ResultWrapper>
-        {bookData && (
+        {currentBooks && (
           <>
-            {bookData.documents.map((book: any, index: number) => (
+            {currentBooks.map((book: any, index: number) => (
               <ResultImageWrapper key={index}>
                 <ResultImage
                   onClick={() => handleShowDetailPage(book)}
@@ -104,11 +123,31 @@ const Search: React.FC = () => {
           </>
         )}
       </ResultWrapper>
+      <Pagination
+        total={bookData?.documents.length || 0}
+        itemsPerPage={itemsPerPage}
+        currentPage={currentPage}
+        onPageChange={handlePageChange}
+      />
     </Wrapper>
   );
 };
 
 export default Search;
+
+const Page = styled.span<PageProps>`
+  cursor: pointer;
+
+  color: ${(props) => (props.isActive ? "#fbff48" : "#ffffff80")};
+  font-weight: ${(props) => (props.isActive ? "700" : "500")};
+`;
+
+const PagenationWrapper = styled.div`
+  z-index: 1;
+
+  display: flex;
+  gap: 20px;
+`;
 
 const BackGround = styled.div`
   position: absolute;
